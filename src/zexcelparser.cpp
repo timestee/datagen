@@ -135,9 +135,9 @@ QJsonValue autoType(QString value,QString type=""){
             QVector<QString> out2;
             ZUtils::split(out2,out.at(i),",");
             QJsonObject o;
-            for(int i=0;i<out2.size();++i){
+            for(int j=0;j<out2.size();++j){
                 QVector<QString> out3;
-                ZUtils::split(out3,out2.at(i),":");
+                ZUtils::split(out3,out2.at(j),":");
                 o.insert(out3.at(0),autoType(out3.at(1)));
             }
             ret.append(o);
