@@ -12,7 +12,7 @@ public:
     static bool isDouble(QString value);
     static bool isBool(QString value);
     static bool saveToFile(QString filename, QString xstr);
-    static void split(QVector<QString>& svec, const QString& ssrc, const QString& seps);
+    static void split(std::vector<std::string>& svec, const std::string& ssrc, const std::string& seps);
 };
 
 #endif // UTILS_H

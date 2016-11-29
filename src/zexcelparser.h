@@ -168,6 +168,7 @@ public:
     QString getOutFileName(int fileTypeFlag,QString filePath,QString saveFileName);
     QJsonArray* procDataSheet(ZSheetInfo* si);
     QJsonValue parseFieldValue(QString value,ZFieldInfo* item,QJsonObject* oRow);
+    QJsonValue autoType(std::string value,std::string type="");
     bool updateMetaInfo(ZSheetInfo* si);
     bool dumpToFile(ZSheetInfo* si,int flag);
 };

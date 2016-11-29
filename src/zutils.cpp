@@ -28,16 +28,16 @@ bool ZUtils::isBool(QString value){
 }
 
 
-void ZUtils::split(QVector<QString>& svec, const QString& ssrc, const QString& seps)
+void ZUtils::split(std::vector<std::string>& svec, const std::string& ssrc, const std::string& seps)
 {
     svec.clear();
-    QString strForSplit(ssrc);
+    std::string strForSplit(ssrc);
     char * pch = NULL;
-    pch = strtok(const_cast<char *>(strForSplit.toStdString().c_str()), seps.toStdString().c_str());
+    pch = strtok(const_cast<char *>(strForSplit.c_str()), seps.c_str());
     while (pch)
     {
         svec.push_back(pch);
-        pch = strtok(NULL, seps.toStdString().c_str());
+        pch = strtok(NULL, seps.c_str());
     }
 }
 

@@ -99,15 +99,15 @@ bool ZExcelParser::onPostProc()
     return true;
 }
 
-QJsonValue autoType(QString value,QString type=""){
+QJsonValue ZExcelParser::autoType(std::string value,std::string type){
     if(type=="s"){
-        return QJsonValue(value);
+        return QJsonValue(QString::fromStdString(value));
     }
 
     //true,true
     if(type=="[]"){
         QJsonArray ret;
-        QVector<QString> out;
+        std::vector<std::string> out;
         ZUtils::split(out,value,";,");
         for(int i=0;i<out.size();++i){
             ret.append(autoType(out.at(i)));
@@ -117,34 +117,42 @@ QJsonValue autoType(QString value,QString type=""){
     //mode:percent;value:45
     if(type=="{}"){
         QJsonObject ret;
-        QVector<QString> out;
+        std::vector<std::string> out;
         ZUtils::split(out,value,";,");
         for(int i=0;i<out.size();++i){
-            QVector<QString> out2;
+            std::vector<std::string> out2;
             ZUtils::split(out2,out.at(i),":");
-            ret.insert(out2.at(0),autoType(out2.at(1)));
+            if(out2.size()<2){
+                _warns.append(QString::fromStdString("autoType invalid with value: "+ out.at(i)+"  type:"+type));
+            }else{
+                ret.insert(QString::fromStdString(out2.at(0)),autoType(out2.at(1)));
+            }
         }
         return ret;
     }
     //id:2;level:30,id:3;level:80
     if(type=="[{}]"){
         QJsonArray ret;
-        QVector<QString> out;
+        std::vector<std::string> out;
         ZUtils::split(out,value,";");
         for(int i=0;i<out.size();++i){
-            QVector<QString> out2;
+            std::vector<std::string> out2;
             ZUtils::split(out2,out.at(i),",");
             QJsonObject o;
             for(int j=0;j<out2.size();++j){
-                QVector<QString> out3;
+                std::vector<std::string> out3;
                 ZUtils::split(out3,out2.at(j),":");
-                o.insert(out3.at(0),autoType(out3.at(1)));
+                if(out3.size()<2){
+                    _warns.append(QString::fromStdString("autoType invalid with value: "+ out2.at(j)+"  type:"+type));
+                }else{
+                    o.insert(QString::fromStdString(out3.at(0)),autoType(out3.at(1)));
+                }
             }
             ret.append(o);
         }
         return ret;
     }
-    return QJsonValue(value);
+    return QJsonValue(QString::fromStdString(value));
 }
 
 QJsonValue ZExcelParser::parseFieldValue(QString value, ZFieldInfo *item,QJsonObject* oRow)
@@ -162,7 +170,7 @@ QJsonValue ZExcelParser::parseFieldValue(QString value, ZFieldInfo *item,QJsonOb
         }
         return si->_jsonObject->operator [](keyVal);
     }
-    return autoType(value,item->_type);
+    return autoType(value.toStdString(),item->_type.toStdString());
 }
 
 bool ZExcelParser::updateMetaInfo(ZSheetInfo *si)
